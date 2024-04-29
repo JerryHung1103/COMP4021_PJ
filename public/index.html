@@ -1,19 +1,100 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
-    
-    <style>
-        #canvas{
-            border: 5px black dashed;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiplayer Game</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <style>
+    #instructions,#description,#signin,#registration{
+        display: block;
+    }
+  </style>
 </head>
 <body>
+    <div id="registration">
+    <h1>Player Registration</h1>
+    <form id="registrationForm" >
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username">
+      <br>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="pw">
+      <br>
+      <button type="submit" id="register-button">Register</button>
+    </form>
+  </div>
 
-    <canvas id="canvas"></canvas>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="sprike.js"></script>
-    <script src="player.js"></script>
-    <script src="index.js"></script>
+  <div id="signin">
+    <h1>Player Sign-In</h1>
+    <form>
+      <label for="username">Username:</label>
+      <input type="text" id="username" >
+      <br>
+      <label for="password">Password:</label>
+      <input type="password" id="password" >
+      <br>
+      <button type="submit" id="login">Sign In</button>
+    </form>
+  </div>
+
+  <div id="description">
+    <h1>Game Description</h1>
+    <p>Enter a brief description of your game here.</p>
+  </div>
+
+  <div id="instructions">
+    <h1>Game Instructions</h1>
+    <ul>
+      <li>Step 1: Add instructions here</li>
+      <li>Step 2: Add instructions here</li>
+      <li>Step 3: Add instructions here</li>
+      <!-- Add more steps as needed -->
+    </ul>
+  </div>
+
+  <script>
     
+ 
+
+
+    $('#register-button').on('click',()=>{
+      let name = $('#username').val();
+      let password = $('#password').val();
+      let data = {username: name , pw:password};
+      fetch("/register", {
+                method: "POST",
+                headers: { "Content-type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then((response) => response.json())
+            .then(data=>console.log(data))
+            .catch(e=>console.log(e));
+            // .then((data) => {
+            //    if(data[success]==='true'){
+            //     $('body').append('<h1>success</h1>')
+            //       console.log('success')
+            //    }
+            //    else{
+            //     // console.log(data[error])
+            //     $('body').append(`<h1>${data[error]}</h1>`)
+            //    }
+            // })   
+    })
+    
+
+  
+    document.getElementById('login').addEventListener('click',()=>{
+      fetch('/play')
+        .then(response => {
+          if (response.ok) {
+          
+            window.location.href = '/play';
+          } else {
+            throw new Error('Failed to load play.html');
+          }
+        })
+    })
+  </script>
 </body>
+</html>

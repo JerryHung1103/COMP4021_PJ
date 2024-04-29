@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 app.use(express.static('../public'))
+app.use(express.json());
 
 const {createServer}= require('http');
 const httpServer = createServer(app);
@@ -9,7 +10,31 @@ const {Server}= require('socket.io');
 const io = new Server(httpServer);
 const PlayerArray=[];
 
+const fs = require('fs');
+
+const path = require('path');
+
+app.get('/play', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/game.html'));
+});
+
+
+app.post("/register", (req, res) => {
+    const {username , pw} = req.body;
+    const playerList = JSON.parse( fs.readFileSync('player.json'));
+    if (playerList[username]) {
+        res.json({ success: false });
+    }
+    else{
+        playerList[username]={pw};
+        fs.writeFileSync('player.json',JSON.stringify(playerList,null, " "));
+        res.json({success:true});
+    }
+  
+});
+
 io.on('connection',(socket)=>{
+   
 
     console.log(socket.id + " is connected my server");
     io.emit('addPlayer',socket.id);
